@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
+const { Schema, model } = mongoose
 
 const foodSchema = new Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  name: String,
+  name: { type: String, required: true },
   grams: { type: Number, default: 100},
-  kcal: Number,
-  kj: Number,
-  protein: Number,
-  lipids: Number,
-  cholesterol: Number,
-  carbohydrate: Number,
+  kcal: { type: Number, required: true },
+  kj: { type: Number, required: true },
+  protein: { type: Number, required: true },
+  lipids: { type: Number, required: true },
+  cholesterol: { type: Number, required: true },
+  carbohydrate: { type: Number, required: true },
+  dietary_fiber: { type: Number, required: true },
+  sodium: { type: Number, required: true },
 })
 
 const Food = model('Food', foodSchema)

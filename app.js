@@ -7,6 +7,9 @@ dotenv.config()
 
 const app = express()
 
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
 mongoose.set("strictQuery", false);
 const mongoDB = process.env.CONNECTIONSTRING
 main().catch((err) => console.log(err));
@@ -16,9 +19,6 @@ async function main() {
 }
 
 app.use('/food', foodRouter)
-
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
 
 app.listen(3000, function() {
   console.log('server running on port 3000')

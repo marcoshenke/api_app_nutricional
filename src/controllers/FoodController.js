@@ -1,6 +1,7 @@
-import Food from 'models/Food'
+import Food from '../models/Food.js'
+import mongoose from 'mongoose'
 
-const create = (req, res) => {
+export const create = (req, res) => {
   Food.find({name: req.body.name})
       .exec()
       .then((food) => {
@@ -18,10 +19,15 @@ const create = (req, res) => {
             lipids: req.body.lipids,
             cholesterol: req.body.cholesterol,
             carbohydrate: req.body.carbohydrate,
+            dietary_fiber: req.body.dietary_fiber,
+            sodium: req.body.sodium,
           })
           food.save()
               .then((result) => {
                 console.log(`Food ${result.name} register with sucess`)
+                res.status(200).json({
+                  message: `Food ${result.name} register with sucess`
+                })
               })
               .catch((error) => {
                 console.log(`Error to register food: ${error}`)
@@ -31,10 +37,7 @@ const create = (req, res) => {
               })
         }
       }).catch((error) => {
-        console.log(`Error when find for food ${req.body.name}`)
+        console.log(`Error when find for food ${req.body.name}: ${error}`)
       })
 }
 
-export default {
-  create
-}
