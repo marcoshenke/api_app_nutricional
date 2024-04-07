@@ -28,7 +28,3 @@ app.get('/', (req, res) => {
   res.send('Hello, world')
 })
 
-app.post('/create-food', (req, res) => {
-  console.log(req.body)
-})
-
