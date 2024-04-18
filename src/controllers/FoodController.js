@@ -27,6 +27,24 @@ export const create = (req, res) => {
             carbohydrate: req.body.carbohydrate,
             dietary_fiber: req.body.dietary_fiber,
             sodium: req.body.sodium,
+            magnesium: req.body.magnesium,
+            potassium: req.body.potassium,
+            manganese: req.body.manganese,
+            phosphor: req.body.phosphor,
+            vitamin_c: req.body.vitamin_c,
+            iron: req.body.iron,
+            calcium: req.body.calcium,
+            copper: req.body.copper,
+            zinc: req.body.zinc,
+            ashes: req.body.ashes,
+            retinol: req.body.retinol,
+            thiamine: req.body.thiamine,
+            riboflavin: req.body.riboflavin,
+            pyridoxine: req.body.pyridoxine,
+            niacin: req.body.niacin,
+            re: req.body.re,
+            rae: req.body.rae,
+            humidity: req.body.humidity
           })
           food.save()
               .then((result) => {
@@ -66,28 +84,51 @@ export const find_one = async (req, res) => {
 }
 
 export const update = async (req, res) => {
-  const id = req.body.id
+  const id = req.params.id
   const newData = req.body.params
 
   if (!ObjectId.isValid(id)) {
     return res.send('Invalid ID')
   }
 
-  console.log(id, newData)
-
   try {
     const result = await Food.updateOne({ _id: id }, newData);
-
-    console.log(result)
 
     if (result.matchedCount === 1) {
       res.send('Food edited successfully');
     } else {
-      res.send('Food not found');
+      res.send('Food not edited');
     }
   } catch (error) {
     res.send('Error: ', error);
   }
   
+}
+
+export const destroy = async (req, res) => {
+  if (!ObjectId.isValid(req.params.id) && !isUndefined(req.params.id)) {
+    return res.send('Invalid ID')
+  } 
+
+  try {
+    const id = req.params.id;
+
+    if (!ObjectId.isValid(req.params.id) && !isUndefined(req.params.id)) {
+      return res.send('Invalid ID')
+    } 
+
+
+    const foodDeleted = await Food.findByIdAndDelete(id);
+
+
+    if (!foodDeleted) {
+        return res.status(404).json({ error: 'Food not found' });
+    }
+
+    res.json({ message: 'Food deleted successfully' });
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+}
 }
 
