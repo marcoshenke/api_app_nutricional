@@ -31,9 +31,39 @@ export const create = async (req, res) => {
       weight,
       height,
     })
-    return res.json(response)
+    return res
+      .status(201)
+      .json({ message: 'User created with success', object: response })
   } catch (error) {
     console.log(error)
-    return res.json({ status: 'error', error: error })
+    return res.status(500).json({ status: 'error', error: error })
+  }
+}
+
+export const update = async (req, res) => {
+  const id = req.params.id
+  const newData = req.body.params
+
+  if (!ObjectId.isValid(id)) {
+    return res.send('Invalid ID')
+  }
+
+  try {
+    const user = await User.findOneAndUpdate({ _id: id }, newData, {
+      new: true,
+    })
+
+    if (!!user) {
+      res
+        .status(200)
+        .json({ message: 'User edited successfully', object: user })
+    } else {
+      res.status(404).json({ message: 'User not found' })
+    }
+  } catch (error) {
+    console.log(error.stack)
+    res
+      .status(500)
+      .send({ error: 'An error occurred when trying to edit the user' })
   }
 }
