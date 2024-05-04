@@ -1,10 +1,13 @@
 import User from '../models/User.js'
 import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
+import lodash from 'lodash'
 
 const bcrypt = bcryptjs
 
 const ObjectId = mongoose.Types.ObjectId
+
+const { isUndefined } = lodash
 
 export const create = async (req, res) => {
   const {
@@ -65,5 +68,45 @@ export const update = async (req, res) => {
     res
       .status(500)
       .send({ error: 'An error occurred when trying to edit the user' })
+  }
+}
+
+export const list = async (req, res) => {
+  const users = await User.find(req.body.params)
+  if (!users) return res.status(404).json({ error: 'No user found' })
+
+  res.status(200).send(users)
+}
+
+export const find = async (req, res) => {
+  const id = req.params.id
+
+  if (!ObjectId.isValid(id) && !isUndefined(id)) {
+    return res.status(400).json({ error: 'Invalid ID' })
+  }
+
+  const user = await User.findOne({ _id: id })
+  if (!user) return res.status(404).send({ message: 'No user found' })
+
+  res.status(200).send(user)
+}
+
+export const destroy = async (req, res) => {
+  const id = req.params.id
+  if (!ObjectId.isValid(id) && !isUndefined(id)) {
+    return res.status(400).json({ error: 'Invalid ID' })
+  }
+
+  try {
+    const userDeleted = await User.findByIdAndDelete(id)
+
+    if (!userDeleted) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    res.json({ message: 'User destroyed successfully' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error })
   }
 }

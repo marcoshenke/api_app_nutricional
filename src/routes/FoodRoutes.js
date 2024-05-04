@@ -7,10 +7,10 @@ router.post('/create', FoodController.create)
 
 router.get('/list', FoodController.list)
 
-router.get('/find', FoodController.find_one)
+router.get('/find', FoodController.find)
 
 router.put('/edit/:id', FoodController.update)
 
-router.delete('/delete/:id', FoodController.destroy)
+router.delete('/destroy/:id', FoodController.destroy)
 
 export default router

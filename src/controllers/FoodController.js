@@ -77,15 +77,17 @@ export const list = async (req, res) => {
   res.send(foods)
 }
 
-export const find_one = async (req, res) => {
-  if (!ObjectId.isValid(req.body.id) && !isUndefined(req.body.id)) {
+export const find = async (req, res) => {
+  const id = req.params.id
+
+  if (!ObjectId.isValid(id) && !isUndefined(id)) {
     return res.status(400).json({ error: 'Invalid ID' })
   }
 
-  const food = await Food.findOne(req.body.params)
-  if (!food) return res.send('No food found')
+  const food = await Food.findOne({ _id: id })
+  if (!food) return res.status(404).send({ message: 'No food found' })
 
-  res.send(food)
+  res.status(200).send(food)
 }
 
 export const update = async (req, res) => {
@@ -126,7 +128,7 @@ export const destroy = async (req, res) => {
       return res.status(404).json({ error: 'Food not found' })
     }
 
-    res.json({ message: 'Food deleted successfully' })
+    res.json({ message: 'Food destroyed successfully' })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: error })
