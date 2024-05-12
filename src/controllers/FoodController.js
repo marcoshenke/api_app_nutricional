@@ -49,13 +49,11 @@ export const create = (req, res) => {
         food
           .save()
           .then((result) => {
-            console.log(`Food ${result.name} register with sucess`)
             res.status(200).json({
               message: `Food ${result.name} register with sucess`,
             })
           })
           .catch((error) => {
-            console.log(`Error to register food: ${error}`)
             res.status(400).json({
               message: error.toString(),
             })
@@ -63,7 +61,6 @@ export const create = (req, res) => {
       }
     })
     .catch((error) => {
-      console.log(`Error when find for food ${req.body.name}: ${error}`)
       res
         .status(500)
         .send({ error: 'An error occurred when trying to create food' })
@@ -71,13 +68,13 @@ export const create = (req, res) => {
 }
 
 export const list = async (req, res) => {
-  const foods = await Food.find(req.body.params)
+  const foods = await Food.find(req.body)
   if (!foods) return res.send('No food found')
 
   res.send(foods)
 }
 
-export const find = async (req, res) => {
+export const show = async (req, res) => {
   const id = req.params.id
 
   if (!ObjectId.isValid(id) && !isUndefined(id)) {
@@ -92,22 +89,25 @@ export const find = async (req, res) => {
 
 export const update = async (req, res) => {
   const id = req.params.id
-  const newData = req.body.params
+  const newData = req.body
 
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid ID' })
   }
 
   try {
-    const result = await Food.updateOne({ _id: id }, newData)
+    const food = await Food.findOneAndUpdate({ _id: id }, newData, {
+      new: true,
+    })
 
-    if (result.matchedCount === 1) {
-      res.send('Food edited successfully')
+    if (!!food) {
+      res
+        .status(200)
+        .json({ message: 'Food edited successfully', object: food })
     } else {
-      res.send('Food not edited')
+      res.status(404).json({ message: 'Food not found' })
     }
   } catch (error) {
-    console.log(error.stack)
     res
       .status(500)
       .json({ error: 'An error occurred when trying to edit the food' })
@@ -130,7 +130,6 @@ export const destroy = async (req, res) => {
 
     res.json({ message: 'Food destroyed successfully' })
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: error })
   }
 }
